@@ -9,6 +9,7 @@ class Wallet extends Component {
     this.state = {
       loading: false,
       moeda: 'BRL',
+      gastos: 0,
     };
   }
 
@@ -18,24 +19,21 @@ class Wallet extends Component {
 
   renderCurrencies = async () => {
     const { currencie } = this.props;
-    console.log(currencie);
-    console.log('chamei rendercurrencies');
     this.setState({ loading: true });
     await currencie(currenciesThunk());
     this.setState({ loading: false });
   }
 
   render() {
-    const { email, gastos } = this.props;
-    console.log(gastos);
-    const { moeda, loading } = this.state;
+    const { email } = this.props;
+    const { moeda, loading, gastos } = this.state;
     return (
       <>
         { loading && <h4>Carregando...</h4>}
         <header data-testid="email-field">
           {`Olá, ${email}`}
           <p data-testid="total-field">
-            {'O gasto é x '}
+            {`O gasto é x ${gastos}`}
           </p>
           <p data-testid="header-currency-field">
             {`A moeda atual é ${moeda}`}
@@ -48,7 +46,7 @@ class Wallet extends Component {
 
 const mapStateToProps = (state) => ({
   email: state.user.email,
-  gastos: state.wallet,
+  gastos: state.wallet.currencies,
 });
 const mapDispatchToProps = (dispatch) => ({
   currencie: () => dispatch(currenciesThunk()),
@@ -56,7 +54,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 Wallet.propTypes = {
   email: PropTypes.string,
-  gastos: PropTypes.object,
+  total: PropTypes.object,
 }.isRequired;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
