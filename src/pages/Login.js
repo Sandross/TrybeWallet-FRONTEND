@@ -61,6 +61,7 @@ class Login extends Component {
            <input
              data-testid="password-input"
              name="inputPass"
+             id="inputPass"
              type="password"
              value={ inputPass }
              onChange={ this.handleChange }

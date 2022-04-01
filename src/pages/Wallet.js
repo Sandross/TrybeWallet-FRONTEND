@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import currenciesThunk from '../actions';
+import Form from '../components/Form';
 
 class Wallet extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ class Wallet extends Component {
             {`A moeda atual é ${moeda}`}
           </p>
         </header>
+        <Form ApiFetch={ this.props } />
       </>
     );
   }
