@@ -1,4 +1,4 @@
-const currency = async () => {
+export const currency = async () => {
   const URL = 'https://economia.awesomeapi.com.br/json/all';
   const response = await fetch(URL);
   const JSON = await response.json();
@@ -6,4 +6,9 @@ const currency = async () => {
   return JSON_FILTERED;
 };
 
-export default currency;
+export const currencyAll = async () => {
+  const URL = 'https://economia.awesomeapi.com.br/json/all';
+  const response = await fetch(URL);
+  const JSON = await response.json();
+  return JSON;
+};

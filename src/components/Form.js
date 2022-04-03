@@ -1,34 +1,72 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { expensesThunk } from '../actions';
+
+const alimentacao = 'Alimentação';
 
 class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: alimentacao,
+      description: '',
       value: 0,
-      method: ['Cartão de crédito', 'Dinheiro', 'Cartão de débito'],
-      category: ['Alimentação', 'Lazer', 'Trabalho', 'Saúde', 'Transporte'],
+      methods: ['Dinheiro', 'Cartão de crédito', 'Cartão de débito'],
+      categorys: ['Alimentação', 'Lazer', 'Trabalho', 'Saúde', 'Transporte'],
+      isDisabled: true,
+      loading: false,
     };
   }
 
   handleChange = ({ target: { name, value } }) => {
     this.setState({
       [name]: value,
+    }, () => this.validateBtn());
+  }
+
+  validateBtn = () => {
+    const { description, value } = this.state;
+    if (description && value > 0) {
+      this.setState({
+        isDisabled: false,
+      });
+    } else {
+      this.setState({
+        isDisabled: true,
+      });
+    }
+  }
+
+  saveInfo = async (e) => {
+    e.preventDefault();
+    const { categorys, methods, isDisabled, loading, currenctCash, ...rest } = this.state;
+    const { savePeople } = this.props;
+    this.setState({ loading: true });
+    await savePeople(rest);
+    this.setState({ loading: false });
+    this.setState({
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: `${alimentacao}`,
+      description: '',
+      value: 0,
     });
   }
 
   render() {
-    const { value, method, category } = this.state;
-    const { currency } = this.props;
-    console.log(currency);
+    const { value, method, categorys,
+      currency, methods, tag, description, isDisabled } = this.state;
+    const { currencys } = this.props;
     return (
       <div>
-        <label htmlFor="value">
+        <label htmlFor="val">
           <strong>Valor:</strong>
           <input
             type="number"
-            id="value"
+            id="val"
             name="value"
             value={ value }
             onChange={ this.handleChange }
@@ -37,45 +75,77 @@ class Form extends Component {
         </label>
         <label htmlFor="select">
           <strong>Moeda:</strong>
-          <select id="select" name="select" data-testid="currency-input">
-            { currency && currency.map((e, i) => (
+          <select
+            id="select"
+            value={ currency }
+            name="currency"
+            onChange={ this.handleChange }
+            data-testid="currency-input"
+          >
+            { currencys && currencys.map((e, i) => (
               <option value={ e } key={ i }>{e}</option>))}
           </select>
         </label>
         <label htmlFor="select-method">
           <strong>Método:</strong>
-          <select id="select-method" name="select-method" data-testid="method-input">
-            { method.map((e, i) => (
-              <option value={ e } key={ i }>{e}</option>))}
+          <select
+            id="select-method"
+            value={ method }
+            name="method"
+            onChange={ this.handleChange }
+            data-testid="method-input"
+          >
+            { methods.map((e) => (
+              <option value={ e } key={ e }>{e}</option>))}
           </select>
         </label>
         <label htmlFor="category-method">
           <strong>Categoria:</strong>
-          <select id="category-method" name="category-method" data-testid="tag-input">
-            { category.map((e, i) => (
+          <select
+            id="category-method"
+            name="tag"
+            value={ tag }
+            onChange={ this.handleChange }
+            data-testid="tag-input"
+          >
+            { categorys.map((e, i) => (
               <option value={ e } key={ i }>{e}</option>))}
           </select>
         </label>
-        <label htmlFor="description">
+        <label htmlFor="description-inpuy">
           <strong>Descrição:</strong>
           <input
             data-testid="description-input"
+            value={ description }
             type="text"
-            id="description"
+            onChange={ this.handleChange }
+            id="description-input"
             name="description"
           />
         </label>
-        <button type="button"> Adicionar Despesa</button>
+        <button
+          disabled={ isDisabled }
+          onClick={ (e) => this.saveInfo(e) }
+          type="submit"
+        >
+          {' '}
+          Adicionar Despesa
+
+        </button>
       </div>
     );
   }
 }
 const mapStateToProps = (state) => ({
-  currency: state.wallet.currencies,
+  currencys: state.wallet.currencies,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  savePeople: (info) => dispatch(expensesThunk(info)),
 });
 
 Form.propTypes = {
   currency: PropTypes.string,
 }.isRequired;
 
-export default connect(mapStateToProps, null)(Form);
+export default connect(mapStateToProps, mapDispatchToProps)(Form);

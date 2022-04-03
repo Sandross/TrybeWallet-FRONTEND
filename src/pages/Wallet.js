@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import currenciesThunk from '../actions';
+import { currenciesThunk } from '../actions';
 import Form from '../components/Form';
 
 class Wallet extends Component {
@@ -10,7 +10,6 @@ class Wallet extends Component {
     this.state = {
       loading: false,
       moeda: 'BRL',
-      gastos: 0,
     };
   }
 
@@ -21,26 +20,30 @@ class Wallet extends Component {
   renderCurrencies = async () => {
     const { currencie } = this.props;
     this.setState({ loading: true });
-    await currencie(currenciesThunk());
+    await currencie();
     this.setState({ loading: false });
   }
 
   render() {
-    const { email } = this.props;
-    const { moeda, loading, gastos } = this.state;
+    const { email, expenses } = this.props;
+    const { moeda, loading } = this.state;
     return (
       <>
         { loading && <h4>Carregando...</h4>}
         <header data-testid="email-field">
           {`Olá, ${email}`}
           <p data-testid="total-field">
-            {`O gasto é x ${gastos}`}
+            { expenses.reduce((acc, elem) => {
+              const { exchangeRates, currency, value } = elem;
+              const exchange = exchangeRates[currency].ask;
+              return (acc + (+value * +exchange));
+            }, 0).toFixed(2)}
           </p>
           <p data-testid="header-currency-field">
             {`A moeda atual é ${moeda}`}
           </p>
         </header>
-        <Form ApiFetch={ this.props } />
+        <Form />
       </>
     );
   }
@@ -48,7 +51,7 @@ class Wallet extends Component {
 
 const mapStateToProps = (state) => ({
   email: state.user.email,
-  gastos: state.wallet.currencies,
+  expenses: state.wallet.expenses,
 });
 const mapDispatchToProps = (dispatch) => ({
   currencie: () => dispatch(currenciesThunk()),
