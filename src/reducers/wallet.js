@@ -1,4 +1,4 @@
-import { WALLET_INFO, PEOPLE_INFO } from '../actions';
+import { WALLET_INFO, PEOPLE_INFO, REMOVE_INFO } from '../actions';
 
 const INITIAL_STATE = {
   currencies: [],
@@ -21,6 +21,10 @@ export default function wallet(state = INITIAL_STATE, { type, payload }) {
         exchangeRates: { ...payload.exchangeRates },
         id }],
     }; }
+  case REMOVE_INFO:
+    return {
+      ...state, expenses: state.expenses.filter((e) => e.id !== payload),
+    };
   default:
     return state;
   }

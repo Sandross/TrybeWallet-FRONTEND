@@ -8,6 +8,7 @@ export const WALLET_REQUEST = 'WALLET_REQUEST';
 export const EXPENSE_REQUEST = 'EXPENSE_REQUEST';
 export const WALLET_ERROR = 'WALLET_ERROR';
 export const EXPENSE_ERROR = 'EXPENSE_ERROR';
+export const REMOVE_INFO = 'REMOVE_INFO';
 
 export const walletRequest = () => ({
   type: WALLET_REQUEST,
@@ -48,6 +49,11 @@ export const expenseInfo = (payload) => ({
 export const walletError = (error) => ({
   type: WALLET_ERROR,
   error,
+});
+
+export const removeInfo = (info) => ({
+  type: REMOVE_INFO,
+  payload: info,
 });
 
 export const currenciesThunk = () => async (dispatch) => {

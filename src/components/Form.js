@@ -29,7 +29,7 @@ class Form extends Component {
 
   validateBtn = () => {
     const { description, value } = this.state;
-    if (description && value > 0) {
+    if (description && value >= 1) {
       this.setState({
         isDisabled: false,
       });
@@ -40,8 +40,7 @@ class Form extends Component {
     }
   }
 
-  saveInfo = async (e) => {
-    e.preventDefault();
+  saveInfo = async () => {
     const { categorys, methods, isDisabled, loading, currenctCash, ...rest } = this.state;
     const { savePeople } = this.props;
     this.setState({ loading: true });
@@ -125,8 +124,8 @@ class Form extends Component {
         </label>
         <button
           disabled={ isDisabled }
-          onClick={ (e) => this.saveInfo(e) }
-          type="submit"
+          onClick={ () => this.saveInfo() }
+          type="button"
         >
           {' '}
           Adicionar Despesa
